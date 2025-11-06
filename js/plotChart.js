@@ -579,19 +579,17 @@ class plotChart {
                 .style("opacity", 0.85);
         }
 
-        // Find highest rated movie with significant gross (top 20% of revenue)
-        let grossThreshold = d3.quantile(vis.displayData.map(d => d.Gross).sort((a, b) => a - b), 0.8);
-        let highRatedBlockbusters = vis.displayData.filter(d => d.Gross >= grossThreshold);
+        // Find highest rated movie (absolute highest, not just blockbusters)
+        // This ensures sync with Featured Movies panel
+        let highestRated = vis.displayData.reduce((max, d) =>
+            d.IMDB_Rating > max.IMDB_Rating ? d : max
+        );
 
-        if (highRatedBlockbusters.length > 0) {
-            let bestBlockbuster = highRatedBlockbusters.reduce((max, d) =>
-                d.IMDB_Rating > max.IMDB_Rating ? d : max
-            );
-
+        if (highestRated) {
             // Only show if different from highest grossing
-            if (bestBlockbuster.Series_Title !== highestGrossing.Series_Title) {
-                let x = vis.xScale(bestBlockbuster.Released_Year);
-                let y = vis.yScale(bestBlockbuster.Gross);
+            if (highestRated.Series_Title !== highestGrossing.Series_Title) {
+                let x = vis.xScale(highestRated.Released_Year);
+                let y = vis.yScale(highestRated.Gross);
 
                 // Determine if annotation should go above or below based on position
                 let spaceAbove = y;
@@ -611,8 +609,8 @@ class plotChart {
                 }
 
                 // Start with full title including rating
-                let titleText = bestBlockbuster.Series_Title;
-                let fullText = `⭐ ${titleText} (${bestBlockbuster.IMDB_Rating}/10)`;
+                let titleText = highestRated.Series_Title;
+                let fullText = `⭐ ${titleText} (${highestRated.IMDB_Rating}/10)`;
 
                 // Create temporary text element to measure actual width
                 let tempText = annotationGroup.append("text")
@@ -632,7 +630,7 @@ class plotChart {
                 // Check if we need to truncate based on position
                 if (actualWidth > availableWidth) {
                     // Text too long - truncate title part
-                    let ratingPart = ` (${bestBlockbuster.IMDB_Rating}/10)`;
+                    let ratingPart = ` (${highestRated.IMDB_Rating}/10)`;
                     let availableForTitle = availableWidth - (ratingPart.length * 7); // Approximate rating width
                     let maxChars = Math.floor(availableForTitle / 7) - 5;
                     titleText = titleText.substring(0, Math.max(maxChars, 10)) + "...";

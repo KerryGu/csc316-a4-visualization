@@ -36,10 +36,74 @@
     flex-shrink: 0;
   }
 
-  .controls-group {
+  /* ===== Integrated Filter & Stats Bar ===== */
+  .filter-bar {
+    backdrop-filter: blur(10px);
+    padding: 1px 24px;
+    margin: 1px 0 20px 0;
+    margin-top: 5px;
+    border-radius: 8px;
+  }
+
+  .filter-controls {
     display: flex;
     align-items: center;
-    gap: 15px;
+    justify-content: space-between;
+    gap: 30px;
+    flex-wrap: wrap;
+  }
+
+  .filter-group {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .filter-label {
+    font-size: 14px;
+    color: #aaa;
+    font-weight: 500;
+    margin: 0;
+  }
+
+  .filter-actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .filter-actions .btn {
+    font-size: 13px;
+    padding: 6px 12px;
+    font-weight: 500;
+  }
+
+  #reset-timeline {
+    background-color: transparent;
+    border-color: #666;
+    color: #aaa;
+  }
+
+  #reset-timeline:hover {
+    background-color: rgba(102, 102, 102, 0.1);
+    border-color: #e50914;
+    color: #fff;
+  }
+
+  #reset-filters {
+    background-color: transparent;
+    border-color: #e50914;
+    color: #e50914;
+  }
+
+  #reset-filters:hover {
+    background-color: #e50914;
+    color: #fff;
+  }
+
+  .filter-actions .btn span {
+    margin-right: 4px;
+    font-size: 14px;
   }
 
   .title-section {
@@ -83,21 +147,20 @@
    /* ===== Dropdown ===== */
   .dropdown {
     position: relative;
-    margin-right: 30px;
   }
-   
+
    .dropdown .btn {
      background-color: #303030;
      border-color: #444;
      color: #fff;
      font-weight: 500;
-     width: 180px; 
+     min-width: 160px;
      text-align: left;
      position: relative;
      display: flex;
      justify-content: space-between;
      align-items: center;
-     padding: 6px 10px;
+     padding: 6px 12px;
      font-size: 13px;
    }
    
@@ -215,7 +278,7 @@
     color: #fff;
   }
 
-  /* ===== Statistics Panel ===== */
+  /* ===== Statistics Panel (Old - Kept for compatibility) ===== */
   .stats-panel {
     display: flex;
     justify-content: center;
@@ -227,22 +290,47 @@
     flex-wrap: wrap;
   }
 
+  /* ===== Integrated Statistics Panel ===== */
+  .stats-panel-integrated {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 3px 16px;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.95) 0%, rgba(20, 20, 20, 0.85) 100%);;
+    border-radius: 6px;
+    border: 1px solid rgba(68, 68, 68, 0.3);
+    flex-shrink: 0;
+  }
+
+  .stat-divider {
+    width: 2px;
+    height: 30px;
+    background: linear-gradient(180deg, transparent, rgba(229, 9, 20, 0.478), transparent);
+  }
+
   .stat-item {
     display: flex;
     align-items: center;
     gap: 8px;
+    white-space: nowrap;
   }
 
   .stat-label {
-    font-size: 13px;
-    color: #888;
+    font-size: 12px;
+    color: #999;
     font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
   }
 
   .stat-value {
-    font-size: 15px;
-    color: #e50914;
+    font-size: 14px;
+    color: #fff;
     font-weight: 600;
+    background: linear-gradient(135deg, #e50914, #ff6b6b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
   }
 
   /* ===== Featured Movies ===== */
@@ -627,8 +715,35 @@
       font-size: 20px;
     }
 
+    /* Responsive filter bar */
+    .filter-bar {
+      padding: 12px 15px;
+    }
+
+    .filter-controls {
+      flex-direction: column;
+      gap: 15px;
+      align-items: stretch;
+    }
+
+    .filter-group {
+      width: 100%;
+    }
+
+    .stats-panel-integrated {
+      width: 100%;
+      justify-content: space-around;
+      padding: 8px 12px;
+    }
+
+    .filter-actions {
+      width: 100%;
+      justify-content: center;
+    }
+
     .dropdown .btn {
-      width: 180px;
+      width: 100%;
+      max-width: 250px;
     }
 
     .featured-grid {

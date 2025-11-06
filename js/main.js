@@ -48,7 +48,7 @@ function loadData() {
             myChart.updateYearRange(yearRange);
         });
 
-        // Setup reset button
+        // Setup reset all filters button
         d3.select("#reset-filters").on("click", function() {
             // Reset genre selection to all
             myChart.selectedGenres.clear();
@@ -64,6 +64,16 @@ function loadData() {
             myChart.yearRange = null;
 
             // Update chart
+            myChart.wrangleData();
+        });
+
+        // Setup reset timeline button (new)
+        d3.select("#reset-timeline").on("click", function() {
+            // Reset timeline brush only
+            myTimeline.brushGroup.call(myTimeline.brush.move, null);
+            myChart.yearRange = null;
+
+            // Update chart with current genre filters intact
             myChart.wrangleData();
         });
 
