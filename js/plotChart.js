@@ -78,7 +78,6 @@ class plotChart {
 
         vis.margin = { top: 20, right: 40, bottom: 60, left: 60 };
 
-<<<<<<< HEAD
         // Store original scales for zoom reset
         vis.originalXDomain = null;
         vis.originalYDomain = null;
@@ -88,8 +87,6 @@ class plotChart {
         vis.zoom = null;
 
         // Get the actual dimensions of the container
-=======
->>>>>>> c0da1ab (Add truncated y-axis and layout adjustments (#17))
         let container = document.getElementById("main-chart");
         let containerWidth = container ? container.getBoundingClientRect().width : 1400;
         let containerHeight = container ? container.getBoundingClientRect().height : 500;
@@ -97,19 +94,14 @@ class plotChart {
         vis.width = containerWidth - vis.margin.left - vis.margin.right;
         vis.height = Math.max(containerHeight - vis.margin.top - vis.margin.bottom, 390);
 
-<<<<<<< HEAD
         // Create main SVG with zoom area
         vis.svgContainer = d3.select("#main-chart")
-=======
-        vis.svg = d3.select("#main-chart")
->>>>>>> c0da1ab (Add truncated y-axis and layout adjustments (#17))
             .attr("width", vis.width + vis.margin.left + vis.margin.right)
             .attr("height", vis.height + vis.margin.top + vis.margin.bottom);
 
         vis.svg = vis.svgContainer.append("g")
             .attr("transform", `translate(${vis.margin.left}, ${vis.margin.top})`);
 
-<<<<<<< HEAD
         // Add clip path to prevent dots from showing outside chart area
         // Add extra padding at bottom to ensure dots on axis are fully visible
         vis.svg.append("defs").append("clipPath")
@@ -121,8 +113,6 @@ class plotChart {
             .attr("height", vis.height + 10);  // Extra space at bottom for dots on axis
 
         // Scales
-=======
->>>>>>> c0da1ab (Add truncated y-axis and layout adjustments (#17))
         vis.xScale = d3.scaleLinear()
             .range([0, vis.width]);
 
@@ -178,7 +168,6 @@ class plotChart {
             .style("fill", "#cccccc")
             .text("Gross Revenue");
 
-<<<<<<< HEAD
 
         // Initialize zoom behavior now that dimensions are set
         vis.zoom = d3.zoom()
@@ -216,8 +205,6 @@ class plotChart {
 
         // ===== Add Interactive Color Legend (AFTER zoom area so it's on top) =====
         // Legend position: top right of y-axis
-=======
->>>>>>> c0da1ab (Add truncated y-axis and layout adjustments (#17))
         const legendSpacing = 28;
 
         const legendData = [
@@ -352,7 +339,6 @@ class plotChart {
 
 
 
-<<<<<<< HEAD
     // Method to toggle zoom/pan mode
     toggleZoomMode() {
         let vis = this;
@@ -406,8 +392,6 @@ class plotChart {
     }
 
     // Method to handle year range updates from Timeline
-=======
->>>>>>> c0da1ab (Add truncated y-axis and layout adjustments (#17))
     updateYearRange(yearRange) {
         let vis = this;
         vis.yearRange = yearRange;
@@ -619,7 +603,6 @@ class plotChart {
             });
         }
 
-<<<<<<< HEAD
         // Filter by rating bands
         vis.displayData = vis.displayData.filter(d => {
             const rating = d.IMDB_Rating;
@@ -629,8 +612,6 @@ class plotChart {
         });
 
         // Filter by year range if brush is active
-=======
->>>>>>> c0da1ab (Add truncated y-axis and layout adjustments (#17))
         if (vis.yearRange) {
             vis.displayData = vis.displayData.filter(d =>
                 d.Released_Year >= vis.yearRange[0] && d.Released_Year <= vis.yearRange[1]
@@ -758,7 +739,6 @@ class plotChart {
             vis.yAxis.tickValues(null);
         }
 
-<<<<<<< HEAD
         // Update axes (apply zoom transform if exists)
         if (vis.currentTransform && (
             vis.currentTransform.k !== 1 ||
@@ -774,15 +754,10 @@ class plotChart {
             vis.yAxisGroup.call(vis.yAxis);
         }
 
-        // Bind data to circles (use chartArea for clipping)
-        let circles = vis.chartArea.selectAll(".dot")
-=======
-        vis.xAxisGroup.call(vis.xAxis);
-        vis.yAxisGroup.call(vis.yAxis);
-
+        // Add axis break indicator for truncated y-axis (Kerry's feature)
         vis.yAxisGroup.selectAll(".axis-break").remove();
 
-        if (needsCompressedScale) {
+        if (needsCompressedScale && !vis.currentTransform) {
             const breakY = vis.yScale(vis.yBreakDetailed);
             const breakWidth = 10;
             const breakHeight = 12;
@@ -799,8 +774,8 @@ class plotChart {
                 .attr("d", breakPath.toString());
         }
 
-        let circles = vis.svg.selectAll(".dot")
->>>>>>> c0da1ab (Add truncated y-axis and layout adjustments (#17))
+        // Bind data to circles (use chartArea for clipping)
+        let circles = vis.chartArea.selectAll(".dot")
             .data(vis.displayData, d => d.Series_Title);
 
         circles.exit()
