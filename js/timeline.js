@@ -22,7 +22,7 @@ class Timeline {
     initVis() {
         let vis = this;
 
-        vis.margin = { top: 20, right: 40, bottom: 25, left: 60 };
+        vis.margin = { top: 20, right: 20, bottom: 15, left: 65 };
 
         // Get the actual width of the container
         let container = document.getElementById(vis.parentElement);
@@ -66,7 +66,7 @@ class Timeline {
         vis.svg.append("text")
             .attr("class", "axis-label")
             .attr("x", vis.width / 2)
-            .attr("y", vis.height + vis.margin.bottom + 10)
+            .attr("y", vis.height + vis.margin.bottom + 20)
             .style("text-anchor", "middle")
             .style("font-size", "12px")
             .style("font-weight", "500")
@@ -79,7 +79,7 @@ class Timeline {
         vis.svg.append("text")
             .attr("class", "slider-title")
             .attr("x", vis.width / 2)
-            .attr("y", -5)
+            .attr("y", 5)
             .style("text-anchor", "middle")
             .style("font-size", "14px")
             .style("font-weight", "500")
@@ -88,7 +88,7 @@ class Timeline {
 
         // Initialize brush component
         vis.brush = d3.brushX()
-            .extent([[0, 0], [vis.width, vis.height]])
+            .extent([[0, 10], [vis.width, vis.height]])
             .on("brush end", function (event) {
                 if (event.selection) {
                     // Convert pixel coordinates to year values

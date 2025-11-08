@@ -76,7 +76,7 @@ class plotChart {
     initMainChart() {
         let vis = this;
 
-        vis.margin = { top: 20, right: 40, bottom: 60, left: 60 };
+        vis.margin = { top: 10, right: 30, bottom: 50, left: 70 };
 
         // Store original scales for zoom reset
         vis.originalXDomain = null;
@@ -151,7 +151,7 @@ class plotChart {
         vis.svg.append("text")
             .attr("class", "axis-label")
             .attr("x", vis.width / 2)
-            .attr("y", vis.height + 30)
+            .attr("y", vis.height + 35)
             .style("text-anchor", "middle")
             .style("font-size", "14px")
             .style("font-weight", "500")
@@ -160,8 +160,9 @@ class plotChart {
 
         vis.svg.append("text")
             .attr("class", "axis-label")
-            .attr("x", 15)
-            .attr("y", -8)
+            .attr("transform", "rotate(-90)")
+            .attr("x", -vis.height / 2)
+            .attr("y", -60)
             .style("text-anchor", "middle")
             .style("font-size", "14px")
             .style("font-weight", "500")
@@ -214,7 +215,7 @@ class plotChart {
 
         const legend = vis.svg.append("g")
             .attr("class", "legend")
-            .attr("transform", `translate(80,0)`);
+            .attr("transform", `translate(40,25)`);
 
         // Create clickable legend items
         const legendItems = legend.selectAll(".legend-item")
@@ -272,7 +273,7 @@ class plotChart {
         // Add reset legend button
         const resetLegendGroup = legend.append("g")
             .attr("class", "reset-legend-btn")
-            .attr("transform", `translate(0, ${legendSpacing * 2 + 10})`)
+            .attr("transform", `translate(-5, ${legendSpacing * 2})`)
             .style("cursor", "pointer")
             .attr("tabindex", "0")
             .attr("role", "button")

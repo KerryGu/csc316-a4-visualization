@@ -41,7 +41,7 @@
     backdrop-filter: blur(10px);
     padding: 1px 24px;
     margin: 1px 0 20px 0;
-    margin-top: 5px;
+    margin-top: 6px;
     border-radius: 8px;
   }
 
@@ -202,13 +202,13 @@
     max-height: 700px;
     overflow-y: auto;
     padding: 15px;
-    width: 200px;
+    width: 175px;
     z-index: 1050;
   }
   
   
   .dropdown-item {
-    padding: 3px 6px;
+    padding: 4px 8px 4px 4px;
     font-size: 12px;
     cursor: pointer;
   }
@@ -221,7 +221,7 @@
   /* Make entire dropdown row clickable */
   .dropdown-item .form-check {
     margin: 0;
-    padding: 4px 8px;
+    padding: 4px 8px 4px 16px;
     cursor: pointer;
   }
 
@@ -464,6 +464,7 @@
     background-color: #1a1a1a;
     border-radius: 8px;
     overflow-x: visible;
+    margin-bottom: -5px;
     display: flex;
     align-items: center;
     justify-content: center;
