@@ -43,11 +43,20 @@ function loadData() {
         // Create main visualization
         myChart = new plotChart(null, data);
 
-        // Create timeline slider with callback
-        myTimeline = new Timeline("slider-chart", data, function (yearRange) {
-            // Callback function: when brush changes, update the main chart
-            myChart.updateYearRange(yearRange);
-        });
+        // Create timeline slider with callbacks
+        myTimeline = new Timeline("slider-chart", data,
+            // onBrush callback: when brush changes, update the main chart
+            function (yearRange) {
+                myChart.updateYearRange(yearRange);
+            },
+            // onYearHover callback: when year is hovered on timeline, highlight scatter points
+            function (year) {
+                myChart.highlightYear(year);
+            }
+        );
+
+        // Connect timeline to chart for bidirectional highlights
+        myChart.setTimeline(myTimeline);
 
         // ===== Rating Split Threshold Control (in Legend) =====
         // Wait for legend to be created, then attach event handlers

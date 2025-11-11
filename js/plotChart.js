@@ -606,6 +606,12 @@ class plotChart {
         vis.wrangleData();
     }
 
+    // Method to set timeline reference (for bidirectional highlight)
+    setTimeline(timeline) {
+        let vis = this;
+        vis.timeline = timeline;
+    }
+
     // Method to handle rating split threshold updates
     updateRatingSplit(threshold) {
         let vis = this;
@@ -619,6 +625,15 @@ class plotChart {
 
         // Re-wrangle data to re-bin movies
         vis.wrangleData();
+    }
+
+    // Method to highlight scatter points by year (bidirectional highlight: timeline → scatter)
+    highlightYear(year) {
+        let vis = this;
+
+        vis.chartArea.selectAll(".dot")
+            .classed("is-highlighted", d => year !== null && d.Released_Year === year)
+            .classed("is-dimmed", d => year !== null && d.Released_Year !== year);
     }
 
     // Zoom event handler
@@ -1239,7 +1254,10 @@ class plotChart {
             .attr("fill", d => vis.colorScale(d.IMDB_Rating))
             .attr("stroke", "#ffffff")  // White stroke to match CSS
             .attr("stroke-width", 1)
-            .attr("opacity", 0);
+            .attr("opacity", 0)
+            .attr("tabindex", 0)  // Make focusable for keyboard navigation
+            .attr("role", "button")
+            .attr("aria-label", d => `${d.Series_Title}, ${d.Released_Year}, $${(d.Gross / 1000000).toFixed(1)}M gross, ${d.IMDB_Rating}/10 rating`);
 
         // Merge and update - interrupt ongoing transitions before updating
         const mergedCircles = enterCircles.merge(circles);
@@ -1259,6 +1277,11 @@ class plotChart {
 
         mergedCircles
             .on("mouseover", function (event, d) {
+                // Bidirectional highlight: notify timeline of hovered year
+                if (vis.timeline) {
+                    vis.timeline.highlightYearOnTimeline(d.Released_Year);
+                }
+
                 // Build tooltip content with enhanced metadata
                 let tooltipContent = `
                     <div class="tooltip-content">
@@ -1331,6 +1354,11 @@ class plotChart {
                     .style("stroke-width", "2px");
             })
             .on("mouseout", function (event, d) {
+                // Clear timeline highlight
+                if (vis.timeline) {
+                    vis.timeline.highlightYearOnTimeline(null);
+                }
+
                 d3.select("#tooltip").classed("visible", false);
 
                 d3.select(this)
@@ -1339,6 +1367,32 @@ class plotChart {
                     .attr("r", 5)
                     .attr("fill", vis.colorScale(d.IMDB_Rating))
                     .style("stroke", "#ffffff")  // Reset to white stroke to match CSS
+                    .style("stroke-width", "1px");
+            })
+            .on("focus", function (event, d) {
+                // Keyboard focus triggers same highlight as mouseover
+                if (vis.timeline) {
+                    vis.timeline.highlightYearOnTimeline(d.Released_Year);
+                }
+
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .attr("r", 8)
+                    .style("stroke", "#e50914")
+                    .style("stroke-width", "2px");
+            })
+            .on("blur", function (event, d) {
+                // Clear on blur
+                if (vis.timeline) {
+                    vis.timeline.highlightYearOnTimeline(null);
+                }
+
+                d3.select(this)
+                    .transition()
+                    .duration(200)
+                    .attr("r", 5)
+                    .style("stroke", "#ffffff")
                     .style("stroke-width", "1px");
             })
             .interrupt() // Stop any ongoing transitions

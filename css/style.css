@@ -753,6 +753,41 @@
     opacity: 1;
   }
 
+  .dot:focus {
+    outline: none;
+    stroke: #e50914;
+    stroke-width: 2px;
+    opacity: 1;
+  }
+
+  .dot:focus-visible {
+    outline: 2px solid #e50914;
+    outline-offset: 2px;
+  }
+
+  /* Bidirectional Highlight States */
+  .dot.is-highlighted {
+    stroke: #e50914 !important;
+    stroke-width: 2.5px !important;
+    opacity: 1 !important;
+    r: 7;
+    filter: drop-shadow(0 0 4px #e50914);
+  }
+
+  .dot.is-dimmed {
+    opacity: 0.2 !important;
+    stroke-opacity: 0.3 !important;
+  }
+
+  /* Timeline hairline and pulse markers */
+  .timeline-hairline {
+    pointer-events: none;
+  }
+
+  .year-pulse {
+    pointer-events: none;
+  }
+
   /* Trend Line */
   .trend-line {
     fill: none;

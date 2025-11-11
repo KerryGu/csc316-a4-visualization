@@ -9,11 +9,14 @@
 class Timeline {
 
     // constructor method to initialize Timeline object
-    constructor(parentElement, data, onBrush) {
+    constructor(parentElement, data, onBrush, onYearHover) {
         this.parentElement = parentElement;
         this.data = data;
         this.onBrush = onBrush; // Callback function to notify parent
+        this.onYearHover = onYearHover; // Callback for year hover events
         this.displayData = [];
+        this.hoveredYear = null; // Track currently hovered year
+        this.animationFrame = null; // For throttling
 
         this.initVis();
     }
@@ -117,6 +120,78 @@ class Timeline {
             }
         });
 
+        // ===== Bidirectional Highlight: Timeline → Scatter =====
+        // Create hairline group for year hover indicator
+        vis.hairlineGroup = vis.svg.append("g")
+            .attr("class", "timeline-hairline")
+            .style("pointer-events", "none")
+            .style("opacity", 0);
+
+        vis.hairline = vis.hairlineGroup.append("line")
+            .attr("y1", 10)
+            .attr("y2", vis.height)
+            .attr("stroke", "#e50914")
+            .attr("stroke-width", 1)
+            .attr("stroke-dasharray", "3,3");
+
+        vis.hairlineLabel = vis.hairlineGroup.append("text")
+            .attr("y", 5)
+            .attr("text-anchor", "middle")
+            .attr("fill", "#e50914")
+            .attr("font-size", "11px")
+            .attr("font-weight", "600");
+
+        // Add hover tracking area (transparent rect above the timeline)
+        vis.hoverArea = vis.svg.append("rect")
+            .attr("class", "timeline-hover-area")
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", vis.width)
+            .attr("height", vis.height)
+            .attr("fill", "transparent")
+            .style("pointer-events", "all")
+            .on("mousemove", function(event) {
+                // Throttle with requestAnimationFrame
+                if (vis.animationFrame) return;
+
+                vis.animationFrame = requestAnimationFrame(() => {
+                    const [mouseX] = d3.pointer(event, this);
+                    const hoveredYear = Math.round(vis.xScale.invert(mouseX));
+
+                    // Update hairline position
+                    const xPos = vis.xScale(hoveredYear);
+                    vis.hairlineGroup
+                        .attr("transform", `translate(${xPos}, 0)`)
+                        .style("opacity", 1);
+
+                    vis.hairlineLabel.text(hoveredYear);
+
+                    // Notify main chart
+                    if (vis.onYearHover && vis.hoveredYear !== hoveredYear) {
+                        vis.hoveredYear = hoveredYear;
+                        vis.onYearHover(hoveredYear);
+                    }
+
+                    vis.animationFrame = null;
+                });
+            })
+            .on("mouseleave", function() {
+                // Clear animation frame if pending
+                if (vis.animationFrame) {
+                    cancelAnimationFrame(vis.animationFrame);
+                    vis.animationFrame = null;
+                }
+
+                // Hide hairline
+                vis.hairlineGroup.style("opacity", 0);
+
+                // Clear hover state
+                vis.hoveredYear = null;
+                if (vis.onYearHover) {
+                    vis.onYearHover(null);
+                }
+            });
+
         // Initial data processing
         vis.wrangleData();
 
@@ -147,6 +222,16 @@ class Timeline {
 
             // Update brush extent
             vis.brush.extent([[0, 0], [vis.width, vis.height]]);
+
+            // Update hover area dimensions
+            if (vis.hoverArea) {
+                vis.hoverArea.attr("width", vis.width);
+            }
+
+            // Update hairline height
+            if (vis.hairline) {
+                vis.hairline.attr("y2", vis.height);
+            }
 
             // Redraw
             vis.updateVis();
@@ -222,5 +307,57 @@ class Timeline {
 
         // Apply brush
         vis.brushGroup.call(vis.brush);
+    }
+
+    // Method to highlight a specific year (bidirectional highlight: scatter → timeline)
+    highlightYearOnTimeline(year) {
+        let vis = this;
+
+        // Remove existing pulse marker
+        vis.svg.selectAll(".year-pulse").remove();
+
+        if (year === null) return;
+
+        // Create pulse marker at the year position
+        const xPos = vis.xScale(year);
+        const yPos = vis.height / 2;
+
+        // Add pulsing circle marker
+        vis.svg.append("circle")
+            .attr("class", "year-pulse")
+            .attr("cx", xPos)
+            .attr("cy", yPos)
+            .attr("r", 0)
+            .attr("fill", "none")
+            .attr("stroke", "#e50914")
+            .attr("stroke-width", 2)
+            .style("pointer-events", "none")
+            .transition()
+            .duration(400)
+            .ease(d3.easeCircleOut)
+            .attr("r", 15)
+            .attr("stroke-width", 1)
+            .attr("opacity", 0.8)
+            .transition()
+            .duration(200)
+            .attr("opacity", 0)
+            .remove();
+
+        // Add year label highlight
+        vis.svg.append("text")
+            .attr("class", "year-pulse")
+            .attr("x", xPos)
+            .attr("y", yPos)
+            .attr("text-anchor", "middle")
+            .attr("dominant-baseline", "middle")
+            .attr("fill", "#e50914")
+            .attr("font-size", "12px")
+            .attr("font-weight", "700")
+            .style("pointer-events", "none")
+            .text(year)
+            .transition()
+            .duration(600)
+            .attr("opacity", 0)
+            .remove();
     }
 }
