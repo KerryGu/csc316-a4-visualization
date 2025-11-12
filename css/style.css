@@ -36,7 +36,7 @@
   .viewport-content::after {
     content: "↓";
     position: absolute;
-    bottom: 3px;
+    bottom: -5px;
     left: 50%;
     transform: translateX(-50%);
     color: rgba(255, 255, 255, 0.3);
@@ -719,12 +719,6 @@
 
   .axis .domain {
     stroke: #444444;
-  }
-
-  .axis-break {
-    stroke: #cccccc;
-    stroke-width: 2px;
-    fill: none;
   }
 
   .legend text {

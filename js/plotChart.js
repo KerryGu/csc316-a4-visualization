@@ -10,11 +10,6 @@ class plotChart {
         this.isInitialized = false; // Track if charts have been initialized
         this.visibleRatingBands = new Set(['high', 'low']); // Track visible rating bands
 
-        const million = 1000000;
-        this.yDetailRatio = 0.75; // Portion of vertical space dedicated to 0-500M range
-        this.yBreakDetailed = 500 * million; // 0-500M detailed segment
-        this.yUpperBoundBase = 1000 * million; // Default compressed segment upper bound (1B)
-
         // Track active dot for keyboard navigation (roving tabindex pattern)
         this.activeDotIndex = null; // Index of currently focused dot
         this.isContainerFocused = false; // Track if container has focus
@@ -109,7 +104,7 @@ class plotChart {
         vis.highColor = "#ff2919ff"; // Red for high ratings
         vis.lowColor = "#005AB5";    // Blue for low ratings
 
-        vis.margin = { top: 10, right: 30, bottom: 50, left: 70 };
+        vis.margin = { top: 10, right: 30, bottom: 60, left: 70 };
 
         // Store original scales for zoom reset
         vis.originalXDomain = null;
@@ -729,9 +724,6 @@ class plotChart {
         vis.xAxisGroup.call(vis.xAxis.scale(newXScale));
         vis.yAxisGroup.call(yAxisForZoom);
 
-        // Remove axis break indicator when zoomed (since we use regular scale during zoom)
-        vis.yAxisGroup.selectAll(".axis-break").remove();
-
         // Update dots positions with new scales
         vis.chartArea.selectAll(".dot")
             .attr("cx", d => newXScale(d.Released_Year))
@@ -752,7 +744,7 @@ class plotChart {
             .duration(750)
             .call(vis.zoom.transform, d3.zoomIdentity)
             .on("end", function() {
-                // After zoom reset completes, redraw chart to restore axis-break and other elements
+                // After zoom reset completes, redraw chart
                 vis.updateVis();
 
                 // Hide reset view button after reset completes with transition
@@ -1215,36 +1207,18 @@ class plotChart {
             ]);
         }
 
+        // Simple linear y-scale
         const grossMax = d3.max(vis.data, d => d.Gross) || 0;
         const million = 1000000;
-        const needsCompressedScale = grossMax > vis.yBreakDetailed;
+        const paddedMax = grossMax === 0
+            ? 100 * million
+            : Math.ceil(((grossMax * 1.05) / million) / 25) * 25 * million;
 
-        if (needsCompressedScale) {
-            const grossMaxMillions = Math.ceil((grossMax / million) / 100) * 100;
-            const upperBound = Math.max(vis.yUpperBoundBase, grossMaxMillions * million);
-            const transitionY = vis.height * (1 - vis.yDetailRatio);
+        vis.yScale
+            .domain([0, paddedMax])
+            .range([vis.height, 0]);
 
-            vis.yScale
-                .domain([0, vis.yBreakDetailed, upperBound])
-                .range([vis.height, transitionY, 0]);
-
-            const lowerTicks = d3.range(0, vis.yBreakDetailed + 1, 100 * million);
-            const upperTicks = d3.range(vis.yBreakDetailed + 100 * million, upperBound + 1, 100 * million);
-
-            const tickValues = Array.from(new Set([...lowerTicks, ...upperTicks])).sort((a, b) => a - b);
-
-            vis.yAxis.tickValues(tickValues);
-        } else {
-            const paddedMax = grossMax === 0
-                ? vis.yBreakDetailed
-                : Math.ceil(((grossMax * 1.05) / million) / 25) * 25 * million;
-
-            vis.yScale
-                .domain([0, paddedMax])
-                .range([vis.height, 0]);
-
-            vis.yAxis.tickValues(null);
-        }
+        vis.yAxis.tickValues(null);
 
         // Update axes (apply zoom transform if exists)
         if (vis.currentTransform && (
@@ -1261,30 +1235,6 @@ class plotChart {
             vis.yAxisGroup.call(vis.yAxis);
         }
 
-        // Add axis break indicator for truncated y-axis (Kerry's feature)
-        vis.yAxisGroup.selectAll(".axis-break").remove();
-
-        // Only show axis break when not zoomed/panned (at identity transform)
-        const isAtIdentity = vis.currentTransform.k === 1 &&
-                            vis.currentTransform.x === 0 &&
-                            vis.currentTransform.y === 0;
-
-        if (needsCompressedScale && isAtIdentity) {
-            const breakY = vis.yScale(vis.yBreakDetailed);
-            const breakWidth = 10;
-            const breakHeight = 12;
-
-            const breakPath = d3.path();
-            breakPath.moveTo(0, breakY - breakHeight / 2);
-            breakPath.lineTo(-breakWidth, breakY - breakHeight / 4);
-            breakPath.lineTo(0, breakY);
-            breakPath.lineTo(-breakWidth, breakY + breakHeight / 4);
-            breakPath.lineTo(0, breakY + breakHeight / 2);
-
-            vis.yAxisGroup.append("path")
-                .attr("class", "axis-break")
-                .attr("d", breakPath.toString());
-        }
 
         // Bind data to circles (use chartArea for clipping)
         let circles = vis.chartArea.selectAll(".dot")
