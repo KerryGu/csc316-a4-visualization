@@ -37,7 +37,7 @@ class StoryManager {
                 requireClickToAdvance: true
             },
             { // Step 3: The Great Divergence (1990-2019)
-                caption: `In the modern era (1990-2019), two distinct success patterns emerged:<br>• <strong>Critic-Proof Hits</strong> like <em>Star Wars: Episode VII</em> (high revenue, lower ratings)<br>• <strong>Acclaimed Gems</strong> like <em>The Shawshank Redemption</em> (high ratings, moderate revenue)<br><br><span class="story-badge">Correlation: Weak</span><br><br><strong>👉 Click either highlighted film to continue.</strong>`,
+                caption: `<span class="story-badge story-badge-topright">Correlation: Weak</span>In the modern era (1990-2019), two distinct success patterns emerged:<br>• <strong>Critic-Proof Hits</strong> like <em>Star Wars: Episode VII</em> (high revenue, lower ratings)<br>• <strong>Acclaimed Gems</strong> like <em>The Shawshank Redemption</em> (high ratings, moderate revenue)<br><br><strong>👉 Click either highlighted film to continue.</strong>`,
                 yearRange: [1990, 2019],
                 genres: 'All',
                 annotations: ["The Shawshank Redemption", "Star Wars: Episode VII - The Force Awakens"],
@@ -45,7 +45,7 @@ class StoryManager {
                 requireClickToAdvance: true
             },
             { // Step 4: Your Turn
-                caption: `Now you've seen the story. The narrative is yours to continue.<br><br>We've returned to your original view. Use the filters, timeline, and zoom to explore for yourself!`,
+                caption: `Now explore on your own!`,
                 yearRange: null, // Will be handled by state restore
                 genres: null, // Will be handled by state restore
                 annotations: [],
@@ -101,18 +101,7 @@ class StoryManager {
     }
 
     resizeVisualization(enableStoryMode) {
-        // Resize the visualization container to make space for story panel
-        const storyPanelWidth = 380; // Must match CSS .story-panel width
-        const container = document.querySelector('.container');
-
-        if (enableStoryMode) {
-            // Shrink container to make space for panel
-            container.style.marginRight = `${storyPanelWidth}px`;
-        } else {
-            // Restore to full width
-            container.style.marginRight = '0';
-        }
-
+        // No longer need to resize for side panel - story panel now replaces header
         // Trigger resize on plotChart and timeline to recalculate dimensions
         // Give DOM a moment to update layout before recalculating
         setTimeout(() => {
@@ -129,28 +118,37 @@ class StoryManager {
         this.plotChart.isStoryModeActive = true;
         this.timeline.isStoryModeActive = true;
 
+        // Hide header elements (Replacement Model)
+        d3.select('.header-section').style('display', 'none');
+        d3.select('.instructions').style('display', 'none');
+        d3.select('.filter-bar').style('display', 'none');
+
         // Show story panel and apply layout changes
         d3.select('body').classed('story-mode-active', true);
         d3.select('#story-panel').style('display', 'block');
         d3.select('#start-story-btn').style('display', 'none');
 
-        // Add overlay to dim other UI elements
-        d3.select('body').append('div')
-            .attr('id', 'story-overlay')
-            .attr('class', 'story-overlay')
-            .on('click', (event) => {
-                // Only exit if clicking the overlay itself, not elements on top of it
-                if (event.target.id === 'story-overlay') {
-                    this.endStory();
-                }
-            });
+        // No overlay needed - story panel replaces header
 
-        // Disable interactive controls
-        this.plotChart.disableZoomPan();
+        // Note: According to spec, zoom/pan should remain ENABLED during story mode
+        // Only disable timeline brush and filter controls
+        // this.plotChart.disableZoomPan(); // Keep zoom/pan enabled per spec
         this.timeline.disableBrush();
-        d3.select('#genreDropdownButton').property('disabled', true);
-        d3.select('#reset-filters').property('disabled', true);
-        d3.select('#reset-timeline').property('disabled', true);
+
+        // Disable reset timeline button (both mouse and keyboard)
+        d3.select('#reset-timeline')
+            .property('disabled', true)
+            .style('cursor', 'not-allowed')
+            .style('opacity', '0.5')
+            .attr('tabindex', '-1');
+
+        // Disable reset legend button
+        d3.select('.reset-legend-btn')
+            .style('cursor', 'not-allowed')
+            .style('opacity', '0.5')
+            .on('click', null)
+            .on('keydown', null)
+            .attr('tabindex', '-1');
 
         // Disable ALL legend interactions (rating split slider + band toggles)
         d3.selectAll('.legend-item')
@@ -158,20 +156,27 @@ class StoryManager {
             .style('opacity', '0.5')
             .on('click', null)     // Remove click handlers
             .on('keydown', null);  // Remove keyboard handlers
-        d3.select('#rating-threshold-slider').property('disabled', true);
 
-        // Disable timeline hover/lock interactions
-        this.timeline.svg.on('mousemove.highlight', null);
-        this.timeline.svg.on('mouseleave.highlight', null);
+        // Disable rating threshold slider
+        d3.select('#rating-threshold-slider')
+            .property('disabled', true)
+            .style('cursor', 'not-allowed')
+            .style('opacity', '0.5');
+
+        // Disable timeline lock interactions only (keep hover for cross-view highlighting)
+        // Per spec: cross-view hover should remain enabled
+        // this.timeline.svg.on('mousemove.highlight', null);  // Keep enabled
+        // this.timeline.svg.on('mouseleave.highlight', null); // Keep enabled
         this.timeline.svg.on('click.lock', null);
         this.timeline.svg.on('dblclick.lock', null);
 
-        // Disable dot hover highlighting (remove actual handlers, not namespaced)
-        this.plotChart.chartArea.selectAll('.dot')
-            .on('mouseover', null)
-            .on('mouseout', null)
-            .on('focus', null)
-            .on('blur', null);
+        // Keep dot hover highlighting enabled for cross-view hover
+        // Per spec: hovering should work during story mode
+        // this.plotChart.chartArea.selectAll('.dot')
+        //     .on('mouseover', null)
+        //     .on('mouseout', null)
+        //     .on('focus', null)
+        //     .on('blur', null);
 
         // User wants tooltips visible in story mode
         // d3.select('#tooltip').classed('story-mode-hidden', true);
@@ -188,21 +193,48 @@ class StoryManager {
         this.plotChart.isStoryModeActive = false;
         this.timeline.isStoryModeActive = false;
 
-        // Remove story panel and overlay
+        // Restore header elements (Replacement Model)
+        d3.select('.header-section').style('display', null);
+        d3.select('.instructions').style('display', null);
+        d3.select('.filter-bar').style('display', null);
+
+        // Remove story panel
         d3.select('body').classed('story-mode-active', false);
         d3.select('#story-panel').style('display', 'none');
         d3.select('#start-story-btn').style('display', 'inline-block');
-        d3.select('#story-overlay').remove();
 
         // Re-enable interactive controls
-        this.plotChart.enableZoomPan();
+        // zoom/pan was never disabled (per spec)
         this.timeline.enableBrush();
         d3.select('#genreDropdownButton').property('disabled', false);
         d3.select('#reset-filters').property('disabled', false);
-        d3.select('#reset-timeline').property('disabled', false);
+
+        // Re-enable reset timeline button
+        d3.select('#reset-timeline')
+            .property('disabled', false)
+            .style('cursor', null)
+            .style('opacity', null)
+            .attr('tabindex', null);
+
+        // Re-enable reset legend button
+        const plotChart = this.plotChart;
+        d3.select('.reset-legend-btn')
+            .style('cursor', null)
+            .style('opacity', null)
+            .on('click', function() {
+                this.blur();
+                plotChart.resetLegend();
+            })
+            .on('keydown', function(event) {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    this.blur();
+                    plotChart.resetLegend();
+                }
+            })
+            .attr('tabindex', null);
 
         // Re-enable legend interactions (slider + band toggles)
-        const plotChart = this.plotChart;
         d3.selectAll('.legend-item')
             .style('cursor', null)
             .style('opacity', null)
@@ -217,7 +249,12 @@ class StoryManager {
                     plotChart.toggleRatingBand(d.id);
                 }
             });
-        d3.select('#rating-threshold-slider').property('disabled', false);
+
+        // Re-enable rating threshold slider
+        d3.select('#rating-threshold-slider')
+            .property('disabled', false)
+            .style('cursor', null)
+            .style('opacity', null);
 
         // Re-enable timeline interactions (need to call timeline's init method bindings)
         // Re-attach the event handlers that were removed
@@ -328,13 +365,26 @@ class StoryManager {
         const step = this.storySteps[stepIndex];
 
         // 1. Update story panel UI
-        d3.select('#story-caption').html(step.caption);
+        d3.select('#story-text').html(step.caption);
         d3.select('#story-prev-btn').property('disabled', stepIndex === 0);
+
+        // Update progress dots
+        d3.selectAll('.story-progress-dot')
+            .classed('active', false)
+            .filter((d, i) => i === stepIndex)
+            .classed('active', true);
+
+        // Update step indicator in headline
+        d3.select('.story-headline').attr('data-step', `STEP ${stepIndex + 1}`);
+
+        // Update mascot emoji based on step for variety
+        const mascots = ['🎬', '🎥', '🎞️', '🍿', '🎭'];
+        d3.select('.story-mascot').text(mascots[stepIndex] || '🎬');
 
         // Handle "Next" button state
         if (stepIndex === this.storySteps.length - 1) {
-            // Last step - change button text
-            d3.select('#story-next-btn').text('End Story & Explore').property('disabled', false);
+            // Last step - disable Next button like we do with Back at step 0
+            d3.select('#story-next-btn').text('Next →').property('disabled', true);
         } else {
             // Regular step
             d3.select('#story-next-btn').text('Next →').property('disabled', step.requireClickToAdvance);

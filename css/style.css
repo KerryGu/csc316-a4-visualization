@@ -68,7 +68,7 @@ svg:focus-visible,
     border: 2px solid #e50914;
     border-radius: 16px;
     padding: 48px 64px;
-    max-width: 600px;
+    max-width: 720px; /* Wider to fit title on one line */
     text-align: center;
     box-shadow: 0 20px 60px rgba(229, 9, 20, 0.3);
     animation: slideUp 0.4s ease;
@@ -203,13 +203,30 @@ svg:focus-visible,
   /* First viewport: Core visualization (header to timeline fills 100vh) */
   .viewport-content {
     min-height: 100vh;
-    height: 100vh;
+    height: 100vh; /* Keep plot on first page in explore mode */
     padding: 10px;
     display: flex;
     flex-direction: column;
     box-sizing: border-box;
     position: relative;
     --scroll-indicator-opacity: 1;
+  }
+
+  /* In story mode, allow natural flow */
+  body.story-mode-active .viewport-content {
+    height: auto;
+    min-height: auto;
+  }
+
+  /* Hide scroll indicator in story mode */
+  body.story-mode-active .viewport-content::after {
+    display: none;
+  }
+
+  /* Prevent page breaks cutting through sections */
+  .header-section, .visualization-section, .slider-section, .featured-movies, .data-source {
+    break-inside: avoid;
+    page-break-inside: avoid;
   }
 
   /* Subtle scroll indicator at bottom of first viewport */
@@ -1115,7 +1132,7 @@ svg:focus-visible,
 
     .header-section {
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
       gap: 5px;
     }
 
@@ -1140,7 +1157,7 @@ svg:focus-visible,
 
     .header-section {
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
       gap: 10px;
       margin-bottom: 5px;
     }
@@ -1226,51 +1243,120 @@ svg:focus-visible,
   /* ===== Story Mode Styles ===== */
 
   /* Story Panel - Sidebar */
+  /* Story Panel - Card/Panel Design with Movie Mascot */
   .story-panel {
-    position: fixed;
-    right: 0;
-    top: 0;
-    width: 380px;
-    height: 100vh;
-    background: linear-gradient(180deg, #1a1a1a 0%, #0d0d0d 100%);
-    border-left: 2px solid #e50914;
-    padding: 30px 25px;
-    z-index: 1001;
-    overflow-y: auto;
-    box-shadow: -4px 0 20px rgba(229, 9, 20, 0.3);
-    transform: translateX(100%);
-    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  }
-
-  .story-panel[style*="display: block"] {
-    transform: translateX(0);
+    position: relative;
+    width: calc(100% - 40px);
+    margin: 20px;
+    padding: 25px;
+    background: linear-gradient(135deg, rgba(26, 26, 26, 0.98) 0%, rgba(10, 10, 10, 0.95) 100%);
+    border: 1px solid rgba(229, 9, 20, 0.3);
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(229, 9, 20, 0.15),
+                0 2px 8px rgba(0, 0, 0, 0.5);
+    margin-bottom: 25px;
   }
 
   .story-panel-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* Movie Character/Mascot */
+  .story-mascot {
+    font-size: 52px;
+    flex-shrink: 0;
+    animation: bounce 2s ease-in-out infinite;
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  /* Story Content Area */
+  .story-content-wrapper {
+    flex: 1;
     display: flex;
     flex-direction: column;
+    gap: 12px;
+  }
+
+  /* Story Meta Bar (Progress + Inflation Note) */
+  .story-meta-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     gap: 20px;
-    height: 100%;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  /* Story Progress Indicator */
+  .story-progress {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .story-progress-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+  }
+
+  .story-progress-dot.active {
+    width: 24px;
+    border-radius: 4px;
+    background: #e50914;
+    box-shadow: 0 0 12px rgba(229, 9, 20, 0.6);
   }
 
   .story-headline {
-    font-size: 22px;
+    font-size: 20px;
     font-weight: 600;
-    color: #fff;
-    margin: 0;
-    padding-bottom: 15px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e50914;
+    margin: 0 0 4px 0;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
-  .story-caption {
-    flex: 1;
-    font-size: 15px;
-    line-height: 1.6;
-    color: #ccc;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.03);
-    border-left: 3px solid #e50914;
+  .story-headline::before {
+    content: attr(data-step);
+    font-size: 12px;
+    color: #999;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: rgba(229, 9, 20, 0.1);
+    padding: 3px 10px;
     border-radius: 4px;
+    font-weight: 600;
+  }
+
+  /* Story Caption - Main Content Style */
+  .story-caption {
+    font-size: 18px;
+    line-height: 1.7;
+    color: #fff;
+    padding: 20px 24px;
+    background: linear-gradient(135deg, rgba(229, 9, 20, 0.08) 0%, rgba(0, 0, 0, 0.6) 100%);
+    border: 1px solid rgba(229, 9, 20, 0.3);
+    border-radius: 10px;
+    backdrop-filter: blur(10px);
+    margin: 0;
+    text-align: left;
+    position: relative;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 1px rgba(255, 255, 255, 0.05);
+    min-height: 100px;
   }
 
   .story-caption strong {
@@ -1291,55 +1377,85 @@ svg:focus-visible,
     border-radius: 12px;
     font-size: 13px;
     font-weight: 600;
-    margin-top: 8px;
+    margin: 0 4px;
+    vertical-align: middle;
+  }
+
+  /* Badge positioned in top right of caption */
+  .story-badge-topright {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    margin: 0;
   }
 
   .story-navigation {
     display: flex;
     gap: 10px;
-    justify-content: space-between;
+    justify-content: center;
+    align-items: center;
+    padding: 0;
   }
 
   .story-navigation button {
-    flex: 1;
+    height: 36px;
+    padding: 0 20px;
+    font-size: 14px;
+    font-weight: 500;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+  }
+
+  #story-prev-btn, #story-next-btn {
+    width: 100px;
+  }
+
+  #story-prev-btn:not(:disabled):hover,
+  #story-next-btn:not(:disabled):hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   }
 
   .story-exit-btn {
     width: 100%;
-    margin-top: auto;
-    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    max-width: 250px;
+    height: 32px;
+    margin: 0 auto;
+    background: rgba(229, 9, 20, 0.1) !important;
+    border: 1px solid rgba(229, 9, 20, 0.3) !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    white-space: nowrap;
+    padding: 0 20px !important;
+    display: block;
   }
 
   .story-exit-btn:hover {
-    background: rgba(255, 255, 255, 0.1) !important;
-    border-color: #fff !important;
+    background: rgba(229, 9, 20, 0.3) !important;
+    border-color: #e50914 !important;
+    color: #fff !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
   }
 
   .story-caveat {
     font-size: 12px;
-    color: #888;
+    color: rgba(255, 255, 255, 0.5);
     margin: 0;
-    padding-top: 10px;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: inline-flex;
+    align-items: center;
+    font-style: italic;
   }
 
-  /* Story Overlay - Dims other UI elements */
-  .story-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.4);
-    z-index: 999;
-    animation: fadeIn 0.3s ease-in;
-    pointer-events: none;
+  /* Navigation Wrapper */
+  .story-nav-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-left: auto;
+    flex-shrink: 0;
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
-  }
+  /* Story Overlay removed - using replacement model instead */
 
   /* Story Mode Active - No layout changes, panel just overlays */
   body.story-mode-active {
@@ -1388,29 +1504,108 @@ svg:focus-visible,
   /* Responsive Story Panel */
   @media (max-width: 1200px) {
     .story-panel {
-      width: 300px;
+      padding: 20px;
+      margin: 15px;
+    }
+
+    .story-mascot {
+      font-size: 45px;
+    }
+
+    .story-headline {
+      font-size: 18px;
+    }
+
+    .story-caption {
+      font-size: 17px;
+      padding: 18px 20px;
     }
   }
 
   @media (max-width: 768px) {
     .story-panel {
+      padding: 15px;
+      margin: 10px;
+    }
+
+    .story-panel-content {
+      flex-wrap: wrap;
+    }
+
+    .story-mascot {
+      font-size: 40px;
+      margin-bottom: 10px;
+    }
+
+    .story-nav-wrapper {
+      margin-left: 0;
       width: 100%;
-      height: 40vh;
-      top: auto;
-      bottom: 0;
-      right: 0;
-      left: 0;
-      border-left: none;
-      border-top: 2px solid #e50914;
-      transform: translateY(100%);
+      align-items: center;
     }
 
-    .story-panel[style*="display: block"] {
-      transform: translateY(0);
+    .story-navigation {
+      width: 100%;
+      justify-content: center;
     }
 
-    .story-overlay {
-      background: rgba(0, 0, 0, 0.2);
+    .story-meta-bar {
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .story-navigation button {
+      height: 32px;
+      font-size: 13px;
+    }
+
+    #story-prev-btn, #story-next-btn {
+      width: 80px;
+    }
+
+    .story-headline {
+      font-size: 16px;
+    }
+
+    .story-caption {
+      font-size: 16px;
+      padding: 15px 18px;
+      min-height: 80px;
+    }
+
+    .story-panel-content {
+      gap: 8px;
+    }
+
+    .story-headline {
+      font-size: 20px;
+    }
+
+    .story-caption {
+      font-size: 13px;
+      padding: 15px 20px;
+      max-width: 100%;
+    }
+
+    .story-navigation {
+      flex-wrap: wrap;
+      padding: 8px 10px;
+    }
+
+    .story-navigation button {
+      width: auto;
+      padding: 5px 15px;
+      height: 35px;
+      font-size: 13px;
+    }
+
+    .story-exit-btn {
+      width: 100%;
+      height: 35px;
+      margin: 10px 0 0 0;
+    }
+
+    .story-caveat {
+      font-size: 10px;
     }
   }
 

@@ -209,9 +209,21 @@ class plotChart {
 
         // Add mouseleave handler to clear timeline pulse when mouse exits scatter area
         // Dot highlights are cleared by the grace timer in mouseout handler
+        // Clear highlights when leaving chart area
         vis.chartArea.on("mouseleave", function() {
-            if (vis.timeline) {
+            vis.isHoveringDot = false;
+            if (vis.timeline && !vis.timeline.isLocked) {
+                // Clear timeline highlight
                 vis.timeline.highlightYearOnTimeline(null);
+                // Clear dot highlights
+                vis.chartArea.selectAll(".dot")
+                    .classed("is-highlighted", false)
+                    .classed("is-dimmed", false);
+                // Hide timeline hairline if it exists
+                if (vis.timeline.hairlineGroup) {
+                    vis.timeline.hairlineGroup.style("opacity", 0);
+                }
+                vis.timeline.hoveredYear = null;
             }
         });
 
@@ -1392,10 +1404,7 @@ class plotChart {
 
         mergedCircles
             .on("mouseover", function (event, d) {
-                // Don't skip tooltip even if story mode or context-click is active - user wants it always visible
-                // Only skip the timeline highlighting in story mode
-                const skipTimelineHighlight = vis.isStoryModeActive;
-
+                // Don't skip tooltip or cross-view hover even in story mode - user wants it always visible
                 // Mark that we're currently hovering over a dot
                 vis.isHoveringDot = true;
 
@@ -1412,14 +1421,12 @@ class plotChart {
                 }
 
                 // Bidirectional highlight: notify timeline of hovered year AND highlight same-year dots
-                // Skip this during story mode to prevent interference
-                if (!skipTimelineHighlight) {
-                    if (vis.timeline) {
-                        vis.timeline.highlightYearOnTimeline(d.Released_Year);
-                    }
-                    // Highlight all dots from the same year (consistent with timeline hover behavior)
-                    vis.highlightYear(d.Released_Year);
+                // Keep this enabled even in story mode for cross-view hover per user request
+                if (vis.timeline) {
+                    vis.timeline.highlightYearOnTimeline(d.Released_Year);
                 }
+                // Highlight all dots from the same year (consistent with timeline hover behavior)
+                vis.highlightYear(d.Released_Year);
 
                 // Build tooltip content with enhanced metadata
                 let tooltipContent = `
@@ -1654,8 +1661,8 @@ class plotChart {
                 // Don't clear timeline pulse or dot highlights here - let them persist while moving between dots
                 // They will be cleared by chartArea mouseleave handler or grace timer
 
-                // Start grace timer to clear scatter highlights (not locked) - but skip in story mode
-                if (!vis.isStoryModeActive && vis.timeline && !vis.timeline.isLocked && !vis.timeline.graceTimer) {
+                // Start grace timer to clear scatter highlights (not locked) - work in all modes
+                if (vis.timeline && !vis.timeline.isLocked && !vis.timeline.graceTimer) {
                     vis.timeline.graceTimer = setTimeout(() => {
                         // Only clear if we're still not hovering over any dot
                         if (!vis.isHoveringDot) {
@@ -1663,6 +1670,8 @@ class plotChart {
                             vis.chartArea.selectAll(".dot")
                                 .classed("is-highlighted", false)
                                 .classed("is-dimmed", false);
+                            // Clear timeline pulse
+                            vis.timeline.highlightYearOnTimeline(null);
                             // Hide timeline hairline
                             if (vis.timeline.hairlineGroup) {
                                 vis.timeline.hairlineGroup.style("opacity", 0);
