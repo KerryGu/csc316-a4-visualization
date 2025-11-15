@@ -20,6 +20,163 @@
     margin: 0 auto;
   }
 
+  /* ===== Welcome Panel Overlay ===== */
+  .welcome-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease;
+  }
+
+  .welcome-overlay.hidden {
+    display: none;
+  }
+
+  .welcome-panel {
+    background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+    border: 2px solid #e50914;
+    border-radius: 16px;
+    padding: 48px 64px;
+    max-width: 600px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(229, 9, 20, 0.3);
+    animation: slideUp 0.4s ease;
+  }
+
+  .welcome-headline {
+    font-size: 32px;
+    font-weight: 600;
+    color: #e50914;
+    margin-bottom: 20px;
+    letter-spacing: -0.5px;
+  }
+
+  .welcome-caption {
+    font-size: 18px;
+    color: #ccc;
+    line-height: 1.6;
+    margin-bottom: 40px;
+  }
+
+  .welcome-buttons {
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .welcome-buttons .btn {
+    min-width: 240px;
+    width: 240px;
+    padding: 14px 28px;
+    font-size: 16px;
+    font-weight: 500;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+  }
+
+  .welcome-buttons .btn-outline-light {
+    border: 2px solid #fff;
+    color: #fff;
+    background-color: transparent;
+  }
+
+  .welcome-buttons .btn-outline-light:hover {
+    background-color: #fff;
+    color: #000;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+  }
+
+  .welcome-buttons .btn-danger {
+    background-color: #e50914;
+    border: 2px solid #e50914;
+    color: #fff;
+  }
+
+  .welcome-buttons .btn-danger:hover {
+    background-color: #c00712;
+    border-color: #c00712;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(229, 9, 20, 0.4);
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Mobile responsive for Welcome Panel */
+  @media (max-width: 768px) {
+    .welcome-panel {
+      padding: 32px 24px;
+      max-width: 90%;
+      margin: 20px;
+    }
+
+    .welcome-headline {
+      font-size: 24px;
+    }
+
+    .welcome-caption {
+      font-size: 16px;
+      margin-bottom: 30px;
+    }
+
+    .welcome-buttons {
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .welcome-buttons .btn {
+      min-width: 100%;
+      width: 100%;
+    }
+  }
+
+  /* Mobile: Full-screen modal */
+  @media (max-width: 480px) {
+    .welcome-overlay {
+      background-color: rgba(0, 0, 0, 0.95);
+    }
+
+    .welcome-panel {
+      max-width: 100%;
+      height: 100%;
+      width: 100%;
+      margin: 0;
+      border-radius: 0;
+      border: none;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 40px 24px;
+    }
+  }
+
   /* First viewport: Core visualization (header to timeline fills 100vh) */
   .viewport-content {
     min-height: 100vh;

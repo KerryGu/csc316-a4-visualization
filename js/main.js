@@ -1,7 +1,66 @@
 let myChart;
 let myTimeline;
+let storyManager;
+
+// Initialize Welcome Panel
+initWelcomePanel();
 
 loadData();
+
+function initWelcomePanel() {
+    const welcomeOverlay = d3.select("#welcome-overlay");
+    const exploreBtn = d3.select("#explore-own-btn");
+    const guidedStoryBtn = d3.select("#start-guided-story-btn");
+
+    // Clear any stale sessionStorage flags from previous sessions
+    sessionStorage.removeItem("startStoryOnLoad");
+
+    // Ensure overlay is visible on page load
+    welcomeOverlay.classed("hidden", false);
+
+    // Handle "Explore on Your Own" button
+    exploreBtn.on("click", function() {
+        // Explicitly clear story mode flag (in case it was set previously)
+        sessionStorage.removeItem("startStoryOnLoad");
+
+        // Dismiss welcome panel with fade out animation
+        welcomeOverlay.style("opacity", 1)
+            .transition()
+            .duration(300)
+            .style("opacity", 0)
+            .on("end", function() {
+                welcomeOverlay.classed("hidden", true);
+            });
+
+        console.log("User chose: Explore on Your Own");
+    });
+
+    // Handle "Start Guided Story" button
+    guidedStoryBtn.on("click", function() {
+        // Dismiss welcome panel with fade out animation
+        welcomeOverlay.style("opacity", 1)
+            .transition()
+            .duration(300)
+            .style("opacity", 0)
+            .on("end", function() {
+                welcomeOverlay.classed("hidden", true);
+
+                // Start story mode after overlay is dismissed
+                // Check if storyManager is already initialized (data loaded)
+                if (storyManager) {
+                    // Data already loaded - start story directly
+                    setTimeout(function() {
+                        storyManager.startStory();
+                    }, 100);
+                } else {
+                    // Data not loaded yet - set flag for later
+                    sessionStorage.setItem("startStoryOnLoad", "true");
+                }
+            });
+
+        console.log("User chose: Start Guided Story");
+    });
+}
 
 function loadData() {
     // Load data asynchronously
@@ -122,10 +181,19 @@ function loadData() {
 
         // ===== Story Mode Initialization =====
         // Initialize story mode after chart and timeline are ready
-        const storyManager = new StoryManager(myChart, myTimeline);
+        storyManager = new StoryManager(myChart, myTimeline);
         storyManager.init();
 
         console.log("Story Mode initialized");
+
+        // Check if user clicked "Start Guided Story" from welcome panel
+        if (sessionStorage.getItem("startStoryOnLoad") === "true") {
+            sessionStorage.removeItem("startStoryOnLoad");
+            // Delay story start to allow visualization to fully render
+            setTimeout(function() {
+                storyManager.startStory();
+            }, 100);
+        }
 
     }).catch(error => {
         console.error("Error loading data:", error);
