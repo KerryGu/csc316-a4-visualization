@@ -13,7 +13,7 @@ class StoryManager {
         // Define the 5-step story arc
         this.storySteps = [
             { // Step 0: The Hook
-                caption: "Welcome! This chart shows 1000 top-rated movies by their release year (left-to-right) and box office gross (bottom-to-top). Let's see how this relationship has changed.",
+                caption: "Welcome! This chart shows 830 top-rated movies by their release year (left-to-right) and box office gross (bottom-to-top). Let's see how this relationship has changed.",
                 yearRange: null, // Show all years
                 genres: 'All',
                 annotations: [],

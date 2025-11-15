@@ -198,6 +198,30 @@ svg:focus-visible,
       justify-content: center;
       padding: 40px 24px;
     }
+
+    /* Context-Click annotations as bottom sheet on mobile */
+    .context-annotation-box {
+      position: fixed !important;
+      bottom: 0 !important;
+      left: 0 !important;
+      right: 0 !important;
+      transform: none !important;
+      width: 100% !important;
+      max-width: 100% !important;
+      border-radius: 16px 16px 0 0 !important;
+      box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.5) !important;
+      padding: 20px !important;
+      animation: slideUp 0.3s ease-out !important;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
   }
 
   /* First viewport: Core visualization (header to timeline fills 100vh) */
@@ -261,7 +285,7 @@ svg:focus-visible,
     display: flex;
     flex-direction: column;
     gap: 15px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
     padding: 10px 0;
     flex-shrink: 0;
   }
@@ -271,7 +295,7 @@ svg:focus-visible,
     backdrop-filter: blur(10px);
     padding: 3px 24px;
     margin: 1px 0 20px 0;
-    margin-top: 6px;
+    margin-top: 0px;
     border-radius: 8px;
   }
 
@@ -651,14 +675,141 @@ svg:focus-visible,
     margin-left: 4px;
   }
 
-  /* ===== Instructions ===== */
-  .instructions {
+  /* ===== Instructions - Top Left Corner Compact Tip Bar ===== */
+  .instructions-corner {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    z-index: 100;
+    background-color: rgba(26, 26, 26, 0.98);
+    border: 1px solid #333;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    max-width: 160px;
+  }
+
+  .instructions-corner details {
+    cursor: pointer;
+  }
+
+  .instructions-corner summary {
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #ccc;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    user-select: none;
+    transition: all 0.2s ease;
+    border-radius: 6px;
+  }
+
+  .instructions-corner summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .instructions-corner details:not([open]) summary:hover {
+    background-color: rgba(229, 9, 20, 0.15);
+    color: #fff;
+  }
+
+  .instructions-corner summary strong {
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .instructions-corner details[open] {
+    width: 335px;
+    max-width: 335px;
     background-color: #1a1a1a;
-    border-left: 3px solid #e50914;
-    padding: 10px 20px;
-    margin-bottom: 10px;
-    margin-top: -5px;
-    border-radius: 4px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  }
+
+  .instructions-corner .tips-content {
+    padding: 12px 15px;
+    background-color: #1a1a1a;
+    border-top: 1px solid #333;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    animation: slideDown 0.3s ease-out;
+    border-radius: 0 0 6px 6px;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      max-height: 0;
+    }
+    to {
+      opacity: 1;
+      max-height: 500px;
+    }
+  }
+
+  .instructions-corner .tip-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 10px;
+    background-color: rgba(229, 9, 20, 0.05);
+    border-left: 3px solid rgba(229, 9, 20, 0.4);
+    font-size: 12px;
+    color: #ccc;
+    white-space: nowrap;
+    transition: all 0.2s ease;
+  }
+
+  .instructions-corner .tip-item:hover {
+    background-color: rgba(229, 9, 20, 0.15);
+    border-left-color: #e50914;
+    padding-left: 12px;
+  }
+
+  .instructions-corner .tip-item strong {
+    color: #fff;
+    font-weight: 500;
+  }
+
+  /* Hide tips during story mode */
+  body.story-mode-active .instructions-corner {
+    display: none;
+  }
+
+  /* Mobile responsive for corner tips */
+  @media (max-width: 768px) {
+    .instructions-corner {
+      top: 10px;
+      left: 10px;
+      max-width: 140px;
+    }
+
+    .instructions-corner summary {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .instructions-corner details[open] {
+      width: auto;
+      max-width: 310px;
+    }
+
+    .instructions-corner .tips-content {
+      padding: 10px;
+      gap: 6px;
+    }
+
+    .instructions-corner .tip-item {
+      font-size: 11px;
+      padding: 4px 8px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .instructions-corner details[open] {
+      max-width: calc(100vw - 30px);
+    }
   }
 
   .instructions p {
@@ -1465,10 +1616,6 @@ svg:focus-visible,
 
   /* Story Overlay removed - using replacement model instead */
 
-  /* Story Mode Active - No layout changes, panel just overlays */
-  body.story-mode-active {
-    /* Story panel will overlay on right side */
-  }
 
   /* Hide tooltips during story mode */
   #tooltip.story-mode-hidden {

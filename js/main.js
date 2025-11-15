@@ -213,3 +213,16 @@ window.addEventListener('scroll', function() {
         }
     }
 });
+
+// Close tip dropdown when clicking outside
+document.addEventListener('click', function(event) {
+    const instructionsCorner = document.querySelector('.instructions-corner');
+    const details = instructionsCorner?.querySelector('details');
+
+    // Check if click is outside the instructions-corner element
+    if (instructionsCorner && details && details.open) {
+        if (!instructionsCorner.contains(event.target)) {
+            details.open = false;
+        }
+    }
+});

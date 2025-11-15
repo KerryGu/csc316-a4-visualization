@@ -904,7 +904,7 @@ class plotChart {
                     d3.select(this)
                         .attr("x1", x)
                         .attr("x2", x)
-                        .attr("y1", d.annotateAbove ? y - 8 : y + 8)
+                        .attr("y1", d.annotateAbove ? y - 6 : y + 6)  // Use 6px (5px radius + 1px stroke)
                         .attr("y2", d.annotateAbove ? y - 50 : y + 50);
                 }
             });
@@ -1823,17 +1823,17 @@ class plotChart {
             let spaceBelow = vis.height - y;
             let annotateAbove = spaceAbove > 100; // Need at least 100px above to avoid covering points
 
-            // Position annotation closer to point (8px clearance for better visual connection)
+            // Position annotation to touch dot border (dots have 5px radius + 1px stroke)
             let lineY1, lineY2, labelY;
             if (annotateAbove) {
                 // Annotation above the point
-                lineY1 = y - 8;   // 8px clearance from point (closer than before)
-                lineY2 = y - 50;  // 42px connector line
+                lineY1 = y - 6;   // Touch the dot border (5px radius + 1px stroke)
+                lineY2 = y - 50;  // 44px connector line
                 labelY = y - 55;  // 5px beyond line end
             } else {
                 // Annotation below the point
-                lineY1 = y + 8;
-                lineY2 = y + 50;
+                lineY1 = y + 6;   // Touch the dot border (5px radius + 1px stroke)
+                lineY2 = y + 50;  // 44px connector line
                 labelY = y + 65;  // More space below
             }
 
@@ -1980,15 +1980,15 @@ class plotChart {
                     }
                 }
 
-                // Position annotation closer to point (8px clearance for better visual connection)
+                // Position annotation to touch dot border (dots have 5px radius + 1px stroke)
                 let lineY1, lineY2, labelY;
                 if (annotateAbove) {
-                    lineY1 = y - 8;   // 8px clearance from point (closer than before)
-                    lineY2 = y - 50;  // 42px connector line
+                    lineY1 = y - 6;   // Touch the dot border (5px radius + 1px stroke)
+                    lineY2 = y - 50;  // 44px connector line
                     labelY = y - 55;  // 5px beyond line end
                 } else {
-                    lineY1 = y + 8;
-                    lineY2 = y + 50;
+                    lineY1 = y + 6;   // Touch the dot border (5px radius + 1px stroke)
+                    lineY2 = y + 50;  // 44px connector line
                     labelY = y + 65;  // More space below
                 }
 
@@ -2115,16 +2115,16 @@ class plotChart {
             let spaceAbove = y;
             let annotateAbove = spaceAbove > 100;
 
-            // Position annotation with appropriate offset
+            // Position annotation to touch dot border (dots have 5px radius + 1px stroke)
             let lineY1, lineY2, labelY;
             if (annotateAbove) {
-                lineY1 = y - 8;
-                lineY2 = y - 50;
-                labelY = y - 55;
+                lineY1 = y - 6;   // Touch the dot border (5px radius + 1px stroke)
+                lineY2 = y - 50;  // 44px connector line
+                labelY = y - 55;  // 5px beyond line end
             } else {
-                lineY1 = y + 8;
-                lineY2 = y + 50;
-                labelY = y + 65;
+                lineY1 = y + 6;   // Touch the dot border (5px radius + 1px stroke)
+                lineY2 = y + 50;  // 44px connector line
+                labelY = y + 65;  // More space below
             }
 
             // Use label instead of movie title

@@ -34,17 +34,32 @@
     <div class="container">
         <!-- First viewport: Core visualization (header to timeline) -->
         <div class="viewport-content">
+            <!-- Instructions - Top Left Corner -->
+            <div class="instructions-corner">
+                <details>
+                    <summary><strong>💡 How to Explore</strong></summary>
+                    <div class="tips-content">
+                        <span class="tip-item">🎯 <strong>Click dots</strong> to compare with other dots</span>
+                        <span class="tip-item">🖱️ <strong>Click background</strong> to dismiss comparisons</span>
+                        <span class="tip-item">📅 <strong>Drag timeline</strong> to filter year range</span>
+                        <span class="tip-item">🔄 <strong>Hover timeline/dots</strong> for cross-highlights</span>
+                        <span class="tip-item">🔒 <strong>Double-click timeline</strong> to lock highlighted year</span>
+                        <span class="tip-item">↻ <strong>Timeline button</strong> resets timeline filter</span>
+                        <span class="tip-item">🎬 <strong>Genre dropdown</strong> filters by movie type</span>
+                        <span class="tip-item">📊 <strong>Click legend bands</strong> to toggle ratings</span>
+                        <span class="tip-item">📏 <strong>Drag legend slider</strong> to adjust split</span>
+                        <span class="tip-item">🔍 <strong>Cmd+scroll</strong> to zoom, drag to pan</span>
+                        <span class="tip-item">📖 <strong>Story button</strong> for guided narrative</span>
+                    </div>
+                </details>
+            </div>
+
             <!-- Header Section with just the title -->
             <div class="header-section">
                 <div class="title-section">
                     <h1 class="title">Commercial Success Of IMDB Top-Rated Movies</h1>
                     <p class="subtitle">Exploring Revenue, Ratings, and Genre Trends Across Decades</p>
                 </div>
-            </div>
-
-            <!-- Instructions -->
-            <div class="instructions">
-                <p><strong>Tip:</strong> • Click legend items to toggle ratings • Cmd/Ctrl + scroll to zoom, drag to pan • Double-click to reset view • Drag on timeline below to filter years • Hover over timeline to highlight movies by year • Hover over dots for movie details and timeline pulse • Tab to navigate dots with keyboard</p>
             </div>
 
             <!-- Integrated Filter & Stats Bar -->
@@ -109,7 +124,7 @@
                     <div class="story-content-wrapper">
                         <!-- Story Header -->
                         <h3 class="story-headline" data-step="STEP 1">
-                            Movie Success Story
+                            The Story of Movie Success
                         </h3>
 
                         <!-- Story Caption (Main Content) -->
@@ -127,8 +142,8 @@
                                 <span class="story-progress-dot" data-step="3"></span>
                                 <span class="story-progress-dot" data-step="4"></span>
                             </div>
-                            <!-- Inflation Note -->
-                            <div class="story-caveat">ⓘ Non-inflation adjusted</div>
+                            <!-- Data Caveat -->
+                            <div class="story-caveat">ⓘ Within IMDb Top-830 sample; revenues not inflation-adjusted.</div>
                         </div>
                     </div>
 
@@ -218,7 +233,7 @@
 
     <!-- Footer with data source acknowledgement -->
     <footer class="data-source">
-        <p>Data Source: <a href="https://www.kaggle.com/datasets/harshitshankhdhar/imdb-dataset-of-top-1000-movies-and-tv-shows" target="_blank" tabindex="-1">IMDB Top 1000 Movies Dataset (Kaggle)</a></p>
+        <p>Data Source: <a href="https://www.kaggle.com/datasets/harshitshankhdhar/imdb-dataset-of-top-1000-movies-and-tv-shows" target="_blank" tabindex="-1">IMDB Top 1000 Movies Dataset (Kaggle)</a> - 830 movies after data cleaning</p>
         <p>Visualization by Kerry Gu, Bradley Lin, and Angela Su | CSC316 Fall 2025</p>
     </footer>
 
