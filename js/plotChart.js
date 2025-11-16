@@ -2896,16 +2896,16 @@ class plotChart {
         let label, color;
 
         if (grossDelta > 0 && ratingDelta > 0) {
-            label = "BLOCKBUSTER OUTPERFORMER";
+            label = "🚀 BLOCKBUSTER OUTPERFORMER";
             color = "#ffd700"; // Gold
         } else if (grossDelta < 0 && ratingDelta > 0) {
-            label = "ACCLAIMED GEM";
+            label = "💎 ACCLAIMED GEM";
             color = "#87ceeb"; // Sky blue
         } else if (grossDelta > 0 && ratingDelta < 0) {
-            label = "CRITIC-PROOF HIT";
+            label = "🍿 CRITIC-PROOF HIT";
             color = "#ff6347"; // Tomato red
         } else {
-            label = "BELOW AVERAGE";
+            label = "📉 BELOW AVERAGE";
             color = "#999"; // Gray
         }
 

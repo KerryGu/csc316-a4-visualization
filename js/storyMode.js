@@ -14,6 +14,7 @@ class StoryManager {
         this.storySteps = [
             { // Step 0: The Hook
                 caption: "Welcome! This chart shows 830 top-rated movies by their release year (left-to-right) and box office gross (bottom-to-top). Let's see how this relationship has changed.",
+                mascotEmoji: "🎟️",
                 yearRange: null, // Show all years
                 genres: 'All',
                 annotations: [],
@@ -22,6 +23,7 @@ class StoryManager {
             },
             { // Step 1: Golden Age (1930-1975)
                 caption: `First, let's look at the 'Golden Age' (1930-1975). In this era, many celebrated films were also strong earners for their time. <span class="story-badge">Evidence: Trend Aligned</span>`,
+                mascotEmoji: "🎬",
                 yearRange: [1930, 1975],
                 genres: 'All',
                 annotations: ["The Godfather"],
@@ -30,6 +32,7 @@ class StoryManager {
             },
             { // Step 2: The Blockbuster Era (1975-1985)
                 caption: `The 1970s created the 'Blockbuster.' Suddenly, 'Action' and 'Sci-Fi' films could dominate. <strong>Click the pulsing dot for <em>Star Wars</em> to see what happened.</strong>`,
+                mascotEmoji: "🦈",
                 yearRange: [1975, 1985],
                 genres: ['Action', 'Sci-Fi', 'Adventure', 'Thriller'],  // Widened to include Jaws (Adventure, Thriller)
                 annotations: ["Star Wars"],  // Only Star Wars gets visual highlighting
@@ -38,6 +41,7 @@ class StoryManager {
             },
             { // Step 3: The Great Divergence (1990-2019)
                 caption: `In the modern era (1990-2019), success split. We now have 'Critic-Proof Hits' (high gross, lower ratings) and 'Acclaimed Gems' (high ratings, low gross). <strong>Click either highlighted film to continue.</strong> <span class="story-badge">Evidence: Correlation Weak</span>`,
+                mascotEmoji: "🎭",
                 yearRange: [1990, 2019],
                 genres: 'All',
                 annotations: ["The Shawshank Redemption", "Star Wars: Episode VII - The Force Awakens"],
@@ -46,6 +50,7 @@ class StoryManager {
             },
             { // Step 4: Your Turn
                 caption: `You've seen the story of the critic-audience split. The dashboard is now unlocked for free exploration. When you're ready, end the story to begin.`,
+                mascotEmoji: "🧭",
                 yearRange: null, // Will be handled by state restore
                 genres: null, // Will be handled by state restore
                 annotations: [],
@@ -397,9 +402,8 @@ class StoryManager {
         // Update step indicator in headline
         d3.select('.story-headline').attr('data-step', `STEP ${stepIndex + 1}`);
 
-        // Update mascot emoji based on step for variety
-        const mascots = ['🎬', '🎥', '🎞️', '🍿', '🎭'];
-        d3.select('.story-mascot').text(mascots[stepIndex] || '🎬');
+        // Update mascot emoji based on step
+        d3.select('.story-mascot').text(step.mascotEmoji || '🎬');
 
         // Handle "Next" button state
         if (stepIndex === this.storySteps.length - 1) {
