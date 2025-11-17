@@ -1505,11 +1505,12 @@ class plotChart {
 
                 // Bidirectional highlight: notify timeline of hovered year AND highlight same-year dots
                 // Keep this enabled even in story mode for cross-view hover per user request
-                if (vis.timeline) {
+                // But don't trigger if timeline is locked (locked year should stay highlighted)
+                if (vis.timeline && !vis.timeline.isLocked) {
                     vis.timeline.highlightYearOnTimeline(d.Released_Year);
+                    // Highlight all dots from the same year (consistent with timeline hover behavior)
+                    vis.highlightYear(d.Released_Year);
                 }
-                // Highlight all dots from the same year (consistent with timeline hover behavior)
-                vis.highlightYear(d.Released_Year);
 
                 // Build tooltip content with enhanced metadata
                 let tooltipContent = `
@@ -2439,11 +2440,12 @@ class plotChart {
             .style("stroke-width", "2px");
 
         // Trigger timeline pulse for active dot AND highlight same-year dots
-        if (vis.timeline) {
+        // But don't trigger if timeline is locked (locked year should stay highlighted)
+        if (vis.timeline && !vis.timeline.isLocked) {
             vis.timeline.highlightYearOnTimeline(activeDatum.Released_Year);
+            // Highlight all dots from the same year (consistent with hover behavior)
+            vis.highlightYear(activeDatum.Released_Year);
         }
-        // Highlight all dots from the same year (consistent with hover behavior)
-        vis.highlightYear(activeDatum.Released_Year);
 
         // Update ARIA live region to announce the active movie
         vis.announceActiveDot(activeDatum);
