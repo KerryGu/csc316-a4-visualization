@@ -15,7 +15,7 @@ Whether you're a film enthusiast, data explorer, or cultural researcher, this si
 
 ## 📚 Dataset
 
-The data powering this visualization comes from the public dataset **“IMDb Dataset of Top 1000 Movies and TV Shows”** on Kaggle. :contentReference[oaicite:1]{index=1}
+The data powering this visualization comes from the public dataset **“IMDb Dataset of Top 1000 Movies and TV Shows”** on Kaggle.
 
 - The dataset includes metadata such as title, release year, genre, runtime, rating, number of votes, and more.
 - The dataset highlights top‑rated movies/TV shows over time and observe rating trends from 1920 to 2020.
