@@ -36,27 +36,11 @@ You can view/download the dataset here:
 - **Data Visualization:** D3.js  
 - **Data Source:** The Kaggle IMDb top‑1000 dataset (static CSV/JSON) — no backend required  
 
-## 📦 Installation & Usage
 
-```bash
-git clone https://github.com/KerryGu/Movie-Success-Over-Years.git
-cd imdb-visualization
+## 📂 Installation & Usage
 
-## 📂 Open index.html with Live Server
-
-To properly run the visualization, you **must** open `index.html` using a local server (due to browser security restrictions with loading local files like CSV or JSON). We recommend using **Live Server** in Visual Studio Code.
-
-## Step 1: Install Live Server Extension
-
-1. Open your project in **Visual Studio Code**
-2. Go to the **Extensions Marketplace**
-3. Search for `Live Server` by **Ritwick Dey**
-4. Click **Install**
-
-## Step 2: Open with Live Server
-
-Once the extension is installed:
-- In VS Code, right-click on `index.html`
-- Select **“Open with Live Server”**
-- Your default browser will open a local address. Click on the address to go to the site.
-
+1. Clone this repository to your local machine.
+2. Open the folder in **Visual Studio Code (VS Code)**.  
+3. Install the **Live Server extension** (from the Extensions panel, search for "Live Server" and click Install).
+4. Right-click on `index.html` and select **“Open with Live Server”**.
+5. The website will open automatically in your browser or you can access it from a local link.
