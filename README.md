@@ -25,10 +25,10 @@ You can view/download the dataset here:
 
 ## 💡 Features
 
-- 🧭 **Year-based navigation:** Adjust a slider (or input a year) to see movies from a specific period  
+- 🧭 **Year-based navigation:** Adjust the year slider to see movies from a specific period  
 - 📈 **Dynamic visual encodings:** Patterns in ratings, vote counts, genres over time — helping users spot long-term trends  
 - 🔍 **Movie detail exploration:** Click on any movie data point to show detailed metadata (title, year, rating, genre, runtime, votes, etc.)  
-- 🎨 Clean and intuitive UI designed for storytelling and data discovery  
+- 🎨 Clean and Netflix-inspired UI designed for storytelling and data discovery  
 
 ## 🛠️ Tech Stack
 
